@@ -40,6 +40,10 @@ P.S. You can delete this when you're done too. It's your config now :)
 
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both"
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.termguicolors = true
+vim.opt.list = true
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -250,6 +254,14 @@ require('lazy').setup({
   },
 
   {
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = {
+      'nvim-telescope/telescope.nvim',
+      'nvim-lua/plenary.nvim'
+    }
+  },
+
+  {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
@@ -257,6 +269,12 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
+
+  {
+    'akinsho/bufferline.nvim',
+    version = "*",
+    dependencies = 'nvim-tree/nvim-web-devicons'
+  }
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -352,10 +370,18 @@ require('telescope').setup {
       },
     },
   },
+  extensions = {
+    file_browser = {
+      theme = 'ivy',
+      hijack_netrw = true,
+    },
+  },
 }
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
+
+pcall(require('telescope').load_extension, 'file_browser')
 
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path
@@ -420,6 +446,11 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>fb', ':Telescope file_browser path=%:p:h select_buffer=true<cr>', { noremap = true })
+vim.keymap.set('n', '<M-left>', ':bp<cr>')
+vim.keymap.set('n', '<M-right>', ':bn<cr>')
+vim.keymap.set('n', '<M-up>', ':enew<cr>')
+vim.keymap.set('n', '<M-down>', ':confirm bd<cr>')
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -659,6 +690,8 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+require('bufferline').setup{}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
